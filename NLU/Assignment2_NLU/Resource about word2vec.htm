@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>
+    
+      Word2Vec Resources &middot; Chris McCormick
+    
+  </title>
+
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-precomposed.png">
+  <link rel="shortcut icon" href="/public/favicon.ico">
+  <link rel="alternate" type="application/atom+xml" title="Chris McCormick" href="/atom.xml">
+
+  <!-- Adding support for MathJax -->
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+
+</head>
+
+
+  <body>
+
+    <div class="container content">
+      <header class="masthead">
+        <h3 class="masthead-title">
+          <a href="/" title="Home">Chris McCormick</a>
+
+          <!--- Display the About, Archive, etc. pages in the header --->
+          
+              &nbsp;&nbsp;&nbsp;<small><a href="/about/">About</a></small>
+          
+              &nbsp;&nbsp;&nbsp;<small><a href="https://www.chrismccormick.ai/membership?utm_source=blog&utm_medium=banner&utm_campaign=membership&utm_content=blog_header2">Membership</a></small>
+          
+              &nbsp;&nbsp;&nbsp;<small><a href="/archive/">Blog Archive</a></small>
+          
+
+        </h3>
+        <!---- I could use this to include the tag line, but it looks cluttered...
+        <h3 class="masthead-title">
+             <small>Machine Learning Tutorials and Insights</small>
+        </h3>
+        ----->
+        
+        <small>Become an NLP expert with videos & code for BERT and beyond → Join <a href="https://www.chrismccormick.ai/membership?utm_source=blog&utm_medium=banner&utm_campaign=membership&utm_content=blog_header2">NLP Basecamp</a> now!</small>
+        
+
+      </header>
+
+      <main>
+        <article class="post">
+  <h1 class="post-title">Word2Vec Resources</h1>
+  <time datetime="2016-04-27T23:00:00-07:00" class="post-date">27 Apr 2016</time>
+  <p>While researching Word2Vec, I came across a lot of different resources of varying usefullness, so I thought I’d share my collection of links and notes on what they contain.</p>
+
+<ul id="markdown-toc">
+  <li><a href="#original-papers--resources-from-google-team" id="markdown-toc-original-papers--resources-from-google-team">Original Papers &amp; Resources from Google Team</a>    <ul>
+      <li><a href="#efficient-estimation-of-word-representations-in-vector-space" id="markdown-toc-efficient-estimation-of-word-representations-in-vector-space">Efficient Estimation of Word Representations in Vector Space</a></li>
+      <li><a href="#distributed-representations-of-words-and-phrases-and-their-compositionality" id="markdown-toc-distributed-representations-of-words-and-phrases-and-their-compositionality">Distributed Representations of Words and Phrases and their Compositionality</a></li>
+      <li><a href="#presentation-on-word2vec" id="markdown-toc-presentation-on-word2vec">Presentation on Word2Vec</a></li>
+      <li><a href="#c-code-implementation" id="markdown-toc-c-code-implementation">C Code Implementation</a></li>
+    </ul>
+  </li>
+  <li><a href="#tutorials" id="markdown-toc-tutorials">Tutorials</a>    <ul>
+      <li><a href="#alex-minnaars-tutorials" id="markdown-toc-alex-minnaars-tutorials">Alex Minnaar’s Tutorials</a></li>
+      <li><a href="#kaggle-word2vec-tutorial" id="markdown-toc-kaggle-word2vec-tutorial">Kaggle Word2Vec Tutorial</a></li>
+      <li><a href="#folgert-karsdorps-word2vec-tutorial" id="markdown-toc-folgert-karsdorps-word2vec-tutorial">Folgert Karsdorp’s Word2Vec Tutorial</a></li>
+      <li><a href="#discussions-on-quora" id="markdown-toc-discussions-on-quora">Discussions on Quora</a></li>
+    </ul>
+  </li>
+  <li><a href="#implementations" id="markdown-toc-implementations">Implementations</a></li>
+  <li><a href="#my-own-stuff" id="markdown-toc-my-own-stuff">My Own Stuff</a></li>
+</ul>
+
+<h1 id="original-papers--resources-from-google-team">Original Papers &amp; Resources from Google Team</h1>
+
+<p>Word2Vec was presented in two initial papers released within a month of each other. The original authors are a team of researchers from Google.</p>
+
+<h3 id="efficient-estimation-of-word-representations-in-vector-space">Efficient Estimation of Word Representations in Vector Space</h3>
+<p><a href="http://arxiv.org/pdf/1301.3781.pdf">Link to paper</a></p>
+
+<p>This was the first paper, dated September 7th, 2013.</p>
+
+<p>This paper introduces the Continuous Bag of Words (CBOW) and Skip-Gram models. However, don’t expect a particularly thorough description of these models in this paper…</p>
+
+<p>I believe the reason for this is that these two new models are presented more as modifications to previously existing models for learning word vectors. Some of the terminology and concepts in this Word2Vec paper come from these past papers and are not redifined in Google’s paper.</p>
+
+<p>A good example are the labels “projection layer” and “hidden layer” which come from the “NNLM” model. The term “projection layer” is used to refer to a middle layer of the neural network <em>with no activation function</em>, whereas “hidden layer” implies a non-linear activation.</p>
+
+<h3 id="distributed-representations-of-words-and-phrases-and-their-compositionality">Distributed Representations of Words and Phrases and their Compositionality</h3>
+<p><a href="http://arxiv.org/pdf/1310.4546.pdf">Link to paper</a></p>
+
+<p>This was a follow-up paper, dated October 16th, 2013.</p>
+
+<p>This paper adds a few more innovations which address the high compute cost of training the skip-gram model on a large dataset. These added tweaks are fundamental to the word2vec algorithm, and are implemented in Google’s C version as well as the Python implementation in <code class="language-plaintext highlighter-rouge">gensim</code>.</p>
+
+<p>These innovations are:</p>
+<ol>
+  <li>Subsampling common words (that is, eliminating some training samples).</li>
+  <li>“Negative Sampling” - A modification of the optimization objective which causes each training sample to update only a small percentage of the model’s weights.</li>
+</ol>
+
+<p>Additionally, they point out the value in recognizing common “phrases” and treating them as single words in the model (e.g., “United_States” or “New_York”).</p>
+
+<h3 id="presentation-on-word2vec">Presentation on Word2Vec</h3>
+<p><a href="https://docs.google.com/file/d/0B7XkCwpI5KDYRWRnd1RzWXQ2TWc/edit">Link to presentation</a></p>
+
+<p>This was presented December 9th, 2013 at NIPS 2013 by Tomas Mikolov from Google.</p>
+
+<p>I think this is mainly a re-hash of the content in the two papers. Seeing it presented differently may help you pull out some additional insights, though.</p>
+
+<h3 id="c-code-implementation">C Code Implementation</h3>
+<p><a href="https://code.google.com/archive/p/word2vec/">Link to code</a></p>
+
+<p>The above link is to the home page for google’s own Word2Vec implementation in C.</p>
+
+<p>You can also find here some pre-trained models that they have provided. Note that it’s possible to load these pre-trained models into <code class="language-plaintext highlighter-rouge">gensim</code> if you want to work with them in Python.</p>
+
+<h1 id="tutorials">Tutorials</h1>
+
+<h3 id="alex-minnaars-tutorials">Alex Minnaar’s Tutorials</h3>
+<p>The best tutorials I found online were done by <a href="http://alexminnaar.com/">Alex Minnaar</a>.</p>
+
+<p>He’s since taken the tutorials down, but I have PDF copies here:</p>
+
+<ul>
+  <li><a href="http://mccormickml.com/assets/word2vec/Alex_Minnaar_Word2Vec_Tutorial_Part_I_The_Skip-Gram_Model.pdf">Part I - The Skip-Gram Model</a></li>
+  <li><a href="http://mccormickml.com/assets/word2vec/Alex_Minnaar_Word2Vec_Tutorial_Part_II_The_Continuous_Bag-of-Words_Model.pdf">Part II - Continuous Bag-of-Words Model</a></li>
+</ul>
+
+<h3 id="kaggle-word2vec-tutorial">Kaggle Word2Vec Tutorial</h3>
+<p><a href="https://www.kaggle.com/c/word2vec-nlp-tutorial/">Link to tutorial</a></p>
+
+<p>This is pretty cool. It’s a Kaggle competition that’s really just a Python tutorial to teach you about using Word2Vec with <code class="language-plaintext highlighter-rouge">gensim</code>. It’s well written and will walk you through all of the steps carefully. It does very little to explain the algorithms used, but is great on the practical implementation side.</p>
+
+<p>It uses a sentiment analysis task (on the IMDB movie review dataset) as an example project. While the tutorial is great for showing you how to get set up with <code class="language-plaintext highlighter-rouge">gensim</code> and even train your own Word2Vec model on the data, you’ll discover that it essentially fails at applying Word2Vec effectively on the example task of sentiment analysis! To get good results on the IMDB dataset, you’ll want to check out Google’s Doc2Vec technique (which isn’t covered in this tutorial).</p>
+
+<p>Here’s what the tutorial covers.</p>
+
+<p>Part 1:</p>
+
+<ul>
+  <li>Cleaning and tokening the text data.</li>
+  <li>Vectorizing the documents using word counts.</li>
+  <li>Classification using a random forest.</li>
+</ul>
+
+<p>Part 2:</p>
+
+<ul>
+  <li>Setting up <code class="language-plaintext highlighter-rouge">gensim</code></li>
+  <li>Training a Word2Vec model (learning word vectors from the dataset) using <code class="language-plaintext highlighter-rouge">gensim</code></li>
+</ul>
+
+<p>Part 3:</p>
+
+<ul>
+  <li>This section attempts two rather unsuccessful ways of applying the word vectors to create vector representations of each review. Neither manages to outperform the simpler word-count approach from part 1.
+    <ul>
+      <li>Creating vector representations of each movie review by averaging its word vectors.</li>
+      <li>Clustering the word vectors to identify sets of synonyms, then using the word-count approach, but this time combining synonyms into a single bucket.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Part 4:</p>
+
+<ul>
+  <li>Points to Google’s Doc2Vec as a superior solution to this task, but doesn’t provide implementation details.</li>
+</ul>
+
+<h3 id="folgert-karsdorps-word2vec-tutorial">Folgert Karsdorp’s Word2Vec Tutorial</h3>
+<p><a href="http://www.folgertkarsdorp.nl/word2vec-an-introduction/">Link to tutorial</a></p>
+
+<p>I haven’t read this tutorial in depth… It covers the Continuous Bag of Words model (instead of the Skip-Gram model). It even includes some of the backprop equations.</p>
+
+<h3 id="discussions-on-quora">Discussions on Quora</h3>
+
+<ul>
+  <li><a href="https://www.quora.com/What-are-the-continuous-bag-of-words-and-skip-gram-architectures-in-laymans-terms">https://www.quora.com/What-are-the-continuous-bag-of-words-and-skip-gram-architectures-in-laymans-terms</a></li>
+  <li><a href="https://www.quora.com/How-does-word2vec-work">https://www.quora.com/How-does-word2vec-work</a></li>
+  <li><a href="https://www.quora.com/What-are-some-interesting-Word2Vec-results/answer/Omer-Levy">https://www.quora.com/What-are-some-interesting-Word2Vec-results/answer/Omer-Levy</a></li>
+</ul>
+
+<h1 id="implementations">Implementations</h1>
+<p>The below implementations also include some tutorials; I haven’t gone through them in detail yet.</p>
+
+<ul>
+  <li>Word2Vec and Doc2Vec in Python in gensim <a href="http://radimrehurek.com/2013/09/deep-learning-with-word2vec-and-gensim/">here</a> and <a href="http://rare-technologies.com/word2vec-tutorial/">here</a></li>
+  <li>Word2vec in Java in <a href="http://deeplearning4j.org/word2vec.html">deeplearning4j</a></li>
+  <li>Java version from <a href="https://github.com/medallia/Word2VecJava">Medallia</a></li>
+  <li>Word2vec implementation in <a href="https://spark.apache.org/docs/latest/mllib-feature-extraction.html#word2vec">Spark MLlib</a></li>
+  <li>Word2Vec implementation / tutorial in Google’s <a href="https://www.tensorflow.org/versions/r0.8/tutorials/word2vec/index.html">TensorFlow</a></li>
+</ul>
+
+<h1 id="my-own-stuff">My Own Stuff</h1>
+
+<ul>
+  <li>I have my own tutorial on the skip-gram model of Word2Vec <a href="http://mccormickml.com/2016/04/19/word2vec-tutorial-the-skip-gram-model/">here</a>.</li>
+  <li><a href="http://mccormickml.com/2017/01/11/word2vec-tutorial-part-2-negative-sampling/">Part 2</a> of my tutorial covers subsampling of frequent words and the Negative Sampling technique.</li>
+  <li>I created a project called <a href="https://github.com/chrisjmccormick/inspect_word2vec">inspec_word2vec</a> that uses gensim in Python to load up Google’s large pre-trained model, and inspect some of the details of the vocabulary.</li>
+  <li>I’m working on a Matlab implementation of Word2Vec, <a href="https://github.com/chrisjmccormick/word2vec_matlab">word2vec_matlab</a>. My goal is less about practical useage and more about understanding the model. For now, it doesn’t support the most important part–actually training a Word2Vec model. What it does do currently is allow you to play with a paired-down (or, really, cleaned-up!) version of Google’s pre-trained model in Matlab.</li>
+</ul>
+
+
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Responsive Unit - End of Post, Colorful -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-9176681289361741"
+     data-ad-slot="8514028518"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  
+  
+  <div id="disqus_thread"></div>
+  <script>
+  
+      var disqus_config = function () {
+          this.page.url = "http://mccormickml.com/2016/04/27/word2vec-resources/"
+          this.page.identifier = "/2016/04/27/word2vec-resources/"
+      };
+      
+      var disqus_shortname = 'mccormickml';
+      // var disqus_developer = 1; // Comment out when the site is live
+      var disqus_title      = 'Word2Vec Resources';
+      
+      (function() {  // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';        
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+  
+  
+</article>
+
+
+<aside class="related">
+  <h3>Related posts</h3>
+  <ul class="related-posts">
+    
+      <li>
+        <a href="/2021/06/29/combining-categorical-numerical-features-with-bert/">
+          Combining Categorical and Numerical Features with Text in BERT
+          <small><time datetime="2021-06-29T09:00:00-07:00">29 Jun 2021</time></small>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/2021/05/27/question-answering-system-tf-idf/">
+          How To Build Your Own Question Answering System
+          <small><time datetime="2021-05-27T09:00:00-07:00">27 May 2021</time></small>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/2021/03/23/neurips_and_year_reivew/">
+          2020 NLP and NeurIPS Highlights
+          <small><time datetime="2021-03-23T09:00:00-07:00">23 Mar 2021</time></small>
+        </a>
+      </li>
+    
+  </ul>
+</aside>
+
+
+      </main>
+      
+      <footer class="footer">
+        <small>
+          &copy; <time datetime="2022-03-16T10:28:53-07:00">2022</time>. All rights reserved.
+        </small>
+      </footer>
+    </div>
+
+    
+     <script>
+       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+       ga('create', 'UA-76624103-1', 'auto');
+       ga('send', 'pageview');
+     </script>
+    
+  </body>
+</html>
